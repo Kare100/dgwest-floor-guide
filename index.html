@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DG West Floor Guide</title>
+<meta name="description" content="DG West, Sports Road, Westlands: every floor and home, drawn from the developer's own plans.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one full-bleed photograph; UI floats over it — copy left, tower elevation right; inside a floor, the plan sheet left and the card right. Single committed look. */
+:root {
+  --ink: #1d1b1f;
+  --paper: #f8f6f3;
+  --plaster: #ebe7e2;
+  --gold: #e3b96c;
+  --gold-ink: #2b1d06;
+  --muted: #6c6670;
+  --line: rgba(29, 27, 31, .12);
+  --sky-top: #5d5f9c;
+  --sky-mid: #a493bf;
+  --sky-low: #efc6b8;
+  --on-sky: #ffffff;
+  --display: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body { background: var(--sky-top); color: var(--ink); font-family: var(--body); font-size: 15px; overflow: hidden; -webkit-font-smoothing: antialiased; }
+.sky { position: fixed; inset: 0; background: linear-gradient(180deg, var(--sky-top) 0%, #7d74b0 28%, var(--sky-mid) 50%, #d8b0c4 70%, var(--sky-low) 86%, #f3d2bf 100%); }
+.plaster { position: fixed; inset: 0; background: var(--plaster); opacity: 0; transition: opacity .5s ease; }
+body.interior .plaster { opacity: 1; }
+#scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+body.hovering #scene { cursor: pointer; }
+body.interior #scene { cursor: grab; }
+body.interior.unit-hover #scene { cursor: pointer; }
+body.interior.dragging #scene { cursor: grabbing; }
+.veil { position: fixed; inset: 0; background: var(--plaster); opacity: 0; pointer-events: none; transition: opacity .45s ease; z-index: 5; }
+.veil.on { opacity: 1; }
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+.top {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 8;
+  display: flex; align-items: center; gap: 24px;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 18px); padding-bottom: 14px;
+  padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px));
+  color: var(--on-sky); transition: opacity .4s ease, transform .4s ease;
+}
+body.interior .top, body.leaving .top { opacity: 0; pointer-events: none; transform: translateY(-8px); }
+.brand { display: flex; align-items: baseline; gap: 10px; font-weight: 600; font-size: 17px; letter-spacing: -.01em; }
+.brand small { font-family: var(--mono); font-weight: 400; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; opacity: .8; border: 1px solid rgba(255,255,255,.45); padding: 2px 7px; border-radius: 999px; }
+.nav { display: flex; gap: 6px; margin-left: auto; margin-right: auto; }
+.nav button { background: none; border: 0; padding: 8px 12px; font-size: 13px; opacity: .85; border-radius: 999px; }
+.nav button:hover { opacity: 1; background: rgba(255,255,255,.12); }
+.btn { display: inline-flex; align-items: center; gap: 10px; border: 0; border-radius: 999px; padding: 7px 7px 7px 18px; font-size: 13.5px; font-weight: 500; white-space: nowrap; text-decoration: none; }
+.btn .arrow { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: var(--gold); font-size: 14px; transition: transform .25s ease; }
+.btn:hover .arrow { transform: translateX(2px); }
+.btn.gold { background: var(--gold); color: var(--gold-ink); }
+.btn.glass { background: rgba(255,255,255,.14); color: var(--on-sky); padding: 10px 18px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); backdrop-filter: blur(6px); }
+.btn.glass:hover { background: rgba(255,255,255,.22); }
+
+.hero { position: fixed; z-index: 6; left: max(28px, env(safe-area-inset-left, 0px)); top: 20vh; width: min(460px, 40vw); color: var(--on-sky); transition: opacity .35s ease, transform .5s ease; }
+body.hovering .hero { opacity: .3; }
+body.leaving .hero, body.interior .hero { opacity: 0; transform: translateX(-24px); pointer-events: none; }
+.eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .9; display: flex; align-items: center; gap: 10px; }
+.eyebrow::before { content: ""; width: 18px; height: 1px; background: currentColor; }
+.hero h1 { font-family: var(--display); font-weight: 300; font-size: clamp(44px, 5.8vw, 90px); line-height: .95; letter-spacing: -.045em; margin: 18px 0 20px; text-wrap: balance; text-shadow: 0 2px 30px rgba(40, 30, 70, .25); }
+.hero p { font-size: 15px; line-height: 1.55; max-width: 38ch; margin: 0 0 24px; opacity: .93; }
+.hero .row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 6;
+  display: flex; justify-content: space-between; align-items: center; gap: 10px 24px; flex-wrap: wrap;
+  padding-top: 14px; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+  padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px));
+  color: var(--on-sky); font-size: 12.5px;
+  background: linear-gradient(0deg, rgba(24, 28, 22, .55), rgba(24, 28, 22, 0));
+  transition: opacity .4s ease;
+}
+body.interior .bar, body.leaving .bar { opacity: 0; pointer-events: none; }
+.facts { display: flex; gap: 6px 22px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.facts b { font-weight: 600; }
+.disc { font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; opacity: .8; }
+
+.tip { position: fixed; z-index: 7; pointer-events: none; min-width: 220px; max-width: 280px; padding: 14px 16px; background: rgba(250, 248, 245, .95); color: var(--ink); border-radius: 14px; box-shadow: 0 18px 40px -12px rgba(30, 20, 50, .45); backdrop-filter: blur(8px); transform: translate(18px, -50%); }
+.tip-top { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; }
+.tip-name { font-weight: 600; font-size: 15px; letter-spacing: -.01em; }
+.tip-lvl { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.tip-meta { color: var(--muted); font-size: 12.5px; margin-top: 4px; line-height: 1.45; }
+.tip-cta { font-size: 11.5px; margin-top: 8px; font-weight: 500; }
+
+.backbtn { position: fixed; z-index: 7; top: calc(env(safe-area-inset-top, 0px) + 18px); left: max(22px, env(safe-area-inset-left, 0px)); display: inline-flex; align-items: center; gap: 8px; border: 0; background: var(--paper); color: var(--ink); border-radius: 999px; padding: 8px 14px 8px 10px; font-size: 13px; box-shadow: 0 1px 0 var(--line), 0 8px 20px -10px rgba(0,0,0,.3); }
+.hint { position: fixed; z-index: 6; left: max(22px, env(safe-area-inset-left, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--muted); }
+.lvlnav { position: fixed; z-index: 7; top: calc(env(safe-area-inset-top, 0px) + 18px); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 6px; background: var(--paper); border-radius: 999px; padding: 4px; box-shadow: 0 1px 0 var(--line), 0 8px 20px -10px rgba(0,0,0,.3); }
+.lvlnav button { width: 32px; height: 32px; border-radius: 50%; border: 0; background: none; }
+.lvlnav button:hover { background: rgba(29,27,31,.06); }
+.lvlnav span { font-family: var(--mono); font-size: 12px; min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; }
+
+.card { position: fixed; z-index: 7; right: max(3.5vw, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); width: 360px; max-height: calc(100% - 110px); overflow: auto; background: var(--paper); border-radius: 18px; padding: 20px; box-shadow: 0 1px 0 var(--line), 0 30px 60px -24px rgba(40, 30, 20, .35); animation: cardIn .6s cubic-bezier(.2,.8,.2,1) both .3s; }
+@keyframes cardIn { from { opacity: 0; transform: translate(18px, -50%); } to { opacity: 1; transform: translate(0, -50%); } }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; background: rgba(29,27,31,.06); white-space: nowrap; }
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+.card h2 { font-family: var(--display); font-weight: 400; font-size: 30px; letter-spacing: -.035em; margin: 12px 0 0; line-height: 1.05; text-wrap: balance; }
+.card .sub { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 8px 0 14px; }
+.specs { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0; border-top: 1px solid var(--line); }
+.specs div { padding: 10px 0 10px 10px; border-bottom: 1px solid var(--line); border-left: 1px solid var(--line); min-width: 0; }
+.specs div:nth-child(3n+1) { border-left: 0; padding-left: 0; }
+.specs dt { font-size: 10.5px; color: var(--muted); letter-spacing: .04em; }
+.specs dd { margin: 3px 0 0; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.label { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin: 16px 0 8px; }
+.units { display: grid; gap: 6px; }
+.unit { display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 10px; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 12px; padding: 9px 11px; transition: border-color .2s, background .2s; }
+.unit:hover { border-color: rgba(29,27,31,.3); }
+.unit[aria-pressed="true"] { border-color: var(--ink); background: #fffaf0; }
+.unit .k { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--ink); color: var(--gold); font-family: var(--mono); font-size: 12px; }
+.unit b { font-weight: 500; font-size: 13.5px; display: block; }
+.unit small { color: var(--muted); font-size: 11.5px; }
+.unit .sz { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; text-align: right; }
+.unit.static { cursor: default; }
+.price { margin-top: 14px; background: var(--ink); color: var(--paper); border-radius: 12px; padding: 13px 15px; font-size: 12.5px; line-height: 1.5; }
+.price strong { display: block; font-family: var(--mono); font-weight: 500; font-size: 17px; margin-bottom: 3px; font-variant-numeric: tabular-nums; }
+.price span { opacity: .75; }
+.feats { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 12.5px; }
+.feats li { display: flex; gap: 9px; align-items: baseline; }
+.feats li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex: none; transform: translateY(-1px); }
+.actions { display: flex; align-items: center; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+.ghost { border: 0; background: none; padding: 8px 10px; font-size: 13px; color: var(--muted); border-radius: 999px; }
+.ghost:hover { color: var(--ink); background: rgba(29,27,31,.05); }
+.fine { font-size: 10.5px; color: var(--muted); margin: 14px 0 0; line-height: 1.5; }
+
+.panel { position: fixed; z-index: 9; top: 0; right: 0; bottom: 0; width: min(560px, 100%); background: var(--paper); color: var(--ink); box-shadow: -30px 0 60px -30px rgba(0,0,0,.4); display: flex; flex-direction: column; padding-top: calc(env(safe-area-inset-top, 0px) + 22px); padding-bottom: env(safe-area-inset-bottom, 0px); animation: panelIn .45s cubic-bezier(.2,.8,.2,1); }
+@keyframes panelIn { from { transform: translateX(40px); opacity: 0; } }
+.panel header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 0 var(--gutter-r) 14px max(24px, env(safe-area-inset-left, 0px)); }
+.panel h2 { font-family: var(--display); font-weight: 400; font-size: 28px; letter-spacing: -.03em; margin: 0; }
+.panel header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.panel .close { border: 0; background: rgba(29,27,31,.06); width: 34px; height: 34px; border-radius: 50%; flex: none; }
+.scroll { overflow: auto; flex: 1; padding: 0 var(--gutter-r) 24px max(24px, env(safe-area-inset-left, 0px)); }
+.stack { display: grid; gap: 0; }
+.stack button { display: grid; grid-template-columns: 78px 1fr auto; gap: 14px; align-items: baseline; text-align: left; border: 0; border-top: 1px solid var(--line); background: none; padding: 14px 4px; }
+.stack button:hover:not(:disabled) { background: rgba(227, 185, 108, .12); }
+.stack button:disabled { cursor: default; color: var(--muted); }
+.stack .lv { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+.stack b { font-weight: 500; display: block; font-size: 14px; }
+.stack small { color: var(--muted); font-size: 12px; line-height: 1.45; display: block; margin-top: 2px; }
+.stack .go { font-size: 12px; color: var(--muted); }
+.src { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; font-size: 13px; line-height: 1.5; }
+.src li { border-top: 1px solid var(--line); padding-top: 12px; }
+.src a { font-weight: 500; }
+.src small { color: var(--muted); display: block; }
+.src h3 { font-family: var(--mono); font-weight: 400; font-size: 10.5px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin: 18px 0 0; }
+.notice { position: fixed; inset: auto 16px 90px; z-index: 9; max-width: 420px; margin: 0 auto; background: var(--paper); border-radius: 12px; padding: 14px 16px; font-size: 13px; box-shadow: 0 20px 40px -20px rgba(0,0,0,.4); }
+
+@media (max-width: 860px) {
+  .nav { display: none; }
+  .top { justify-content: space-between; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
+  .top .btn { display: none; }
+  .hero { top: calc(env(safe-area-inset-top, 0px) + 74px); left: var(--gutter-l); right: var(--gutter-r); width: auto; }
+  .hero h1 { font-size: clamp(36px, 10vw, 56px); margin: 12px 0 10px; }
+  .hero p { font-size: 13.5px; margin-bottom: 14px; }
+  .bar { padding-left: var(--gutter-l); padding-right: var(--gutter-r); font-size: 11.5px; }
+  .facts { gap: 4px 14px; }
+  .card { top: auto; transform: none; left: var(--gutter-l); right: var(--gutter-r); width: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); max-height: 48%; animation-name: sheetIn; }
+  @keyframes sheetIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  .hint { display: none; }
+  .backbtn { left: var(--gutter-l); }
+  .lvlnav { left: auto; right: var(--gutter-r); transform: none; }
+  .lvlnav span { min-width: 48px; }
+}
+@media (max-width: 860px) and (max-height: 600px) { .hero p { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+*, *::before, *::after { box-sizing: border-box; }
+/* ---- additions: real photograph instead of a 3D model, elevation picker, drawn plans ---- */
+.photo { position: fixed; inset: 0; background: #2d3340 center 40% / cover no-repeat; transform: scale(1.03); transition: transform 1.2s ease, filter .6s ease; }
+.photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(18,20,30,.62) 0%, rgba(18,20,30,.25) 45%, rgba(18,20,30,.35) 100%), linear-gradient(0deg, rgba(14,16,20,.55), rgba(14,16,20,0) 40%); }
+body.interior .photo { filter: blur(10px) brightness(.7); }
+.credit { position: fixed; z-index: 6; right: max(28px, env(safe-area-inset-right, 0px)); top: calc(env(safe-area-inset-top, 0px) + 66px); font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,.6); }
+body.interior .credit { display: none; }
+
+.elev { position: fixed; z-index: 4; right: max(6vw, env(safe-area-inset-right, 0px)); top: calc(env(safe-area-inset-top, 0px) + 92px); bottom: 86px; width: min(34vw, 420px); display: flex; flex-direction: column; align-items: center; transition: opacity .4s ease, transform .5s ease; }
+body.interior .elev, body.leaving .elev { opacity: 0; transform: translateX(24px); pointer-events: none; }
+.elev svg { height: 100%; width: auto; max-width: 100%; overflow: visible; }
+.elev .lv { cursor: pointer; }
+.elev .lv rect.band { fill: rgba(255,255,255,0); transition: fill .15s; }
+.elev .lv:hover rect.band, .elev .lv.on rect.band { fill: rgba(227,185,108,.55); }
+.elev .lv.static { cursor: default; }
+.elev .lv.static:hover rect.band { fill: rgba(255,255,255,.12); }
+.elev-cap { margin-top: 10px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; color: rgba(255,255,255,.75); text-align: center; }
+
+.stage { position: fixed; inset: 0; z-index: 5; display: none; padding-top: calc(env(safe-area-inset-top, 0px) + 70px); padding-bottom: 24px; padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: calc(360px + 7vw); }
+body.interior .stage { display: flex; }
+.sheet-plan { flex: 1; min-width: 0; background: #fbfaf7; border-radius: 18px; box-shadow: 0 1px 0 var(--line), 0 30px 60px -24px rgba(40,30,20,.35); padding: 18px 20px 14px; display: flex; flex-direction: column; animation: sheetUp .6s cubic-bezier(.2,.8,.2,1) both .1s; }
+@keyframes sheetUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.sheet-plan header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.sheet-plan h3 { margin: 0; font-weight: 500; font-size: 15px; }
+.sheet-plan header span { font-family: var(--mono); font-size: 10.5px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.plan-svg { flex: 1; min-height: 0; position: relative; margin: 6px 0; }
+.plan-svg svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.plan-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); }
+.hov { font-family: var(--mono); color: var(--ink); }
+
+/* drawing */
+.w { fill: #fff; stroke: #1d1b1f; }
+.w.open { stroke-dasharray: 4 4; stroke-width: 1 !important; stroke: #8b8590; }
+.w.out { fill: #f1efe9; stroke: #6c6670; stroke-dasharray: 5 3; stroke-width: 1 !important; }
+.w.wet { fill: #f1f4f5; }
+.w.core { fill: #e9e6e1; }
+.w.slot { fill: url(#hatch); stroke: none; }
+.w:hover, .w.hl { fill: #fbeed3; }
+.fx { fill: none; stroke: #9b958f; stroke-width: 1; }
+.fx-fill { fill: #f4f1ec; stroke: #9b958f; stroke-width: 1; }
+.win { stroke: #fff; }
+.win2 { stroke: #5b7d8c; stroke-width: 1; }
+.rl { font-family: var(--body); font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; fill: #1d1b1f; text-anchor: middle; pointer-events: none; }
+.rd { font-family: var(--mono); font-size: 9.5px; fill: #6c6670; text-anchor: middle; pointer-events: none; }
+.u { cursor: pointer; }
+.u rect { stroke: #1d1b1f; transition: fill .15s; }
+.u:hover rect, .u.sel rect { fill: #f3dcae !important; }
+.u text { pointer-events: none; }
+.photo-card { border-radius: 12px; overflow: hidden; position: relative; aspect-ratio: 16 / 10; background: #ddd; margin-top: 14px; }
+.photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-card small { position: absolute; left: 10px; bottom: 8px; font-size: 10.5px; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+
+@media (max-width: 860px) {
+  .elev { right: auto; left: 50%; transform: translateX(-50%); top: auto; bottom: 64px; height: 30vh; width: 70vw; }
+  body.interior .elev { transform: translateX(-50%); }
+  .hero { top: calc(env(safe-area-inset-top, 0px) + 70px); }
+  .credit { display: none; }
+  .stage { padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-bottom: 52%; padding-top: calc(env(safe-area-inset-top, 0px) + 66px); }
+}
+</style>
+</head><body>
+
+<div class="photo" id="photo" role="img" aria-label="Nairobi skyline at dusk"></div>
+<div class="credit">Photo: Nairobi skyline · Unsplash</div>
+
+<header class="top">
+  <div class="brand">DG West <small>Floor guide</small></div>
+  <nav class="nav" aria-label="Main">
+    <button type="button" id="nav-floors">Floors</button>
+    <button type="button" id="nav-typical">Residences</button>
+    <button type="button" id="nav-roof">Rooftop pool</button>
+    <button type="button" id="nav-sources">Sources</button>
+  </nav>
+  <a class="btn gold" href="https://reportagegroup.com/wp-content/uploads/DGWest-Brochure-Digital-Version-2.pdf" target="_blank" rel="noopener">Developer brochure <span class="arrow" aria-hidden="true">↗</span></a>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Sports Road, Westlands · 25 floors · 200 homes</div>
+  <h1>DG West, floor by floor.</h1>
+  <p id="hero-p">A guide to Westlands' newest residential tower, drawn from the developer's own floor plans and room sizes. Hover a floor on the tower to see what is on it, then click to look inside.</p>
+  <div class="row">
+    <button class="btn gold" type="button" id="explore">Browse floors <span class="arrow" aria-hidden="true">→</span></button>
+    <button class="btn glass" type="button" id="hero-sources">Sources &amp; assumptions</button>
+  </div>
+</section>
+
+<div class="elev" id="elev"><svg id="elev-svg" aria-label="Elevation of DG West. Each band is a floor; select one to open it."></svg><div class="elev-cap">Elevation · hover a floor</div></div>
+
+<footer class="bar">
+  <div class="facts"><span><b>25</b> floors</span><span><b>10</b> homes per floor</span><span>Studio <b>41 m²</b> · 1-bed <b>70 m²</b> · 2-bed <b>90 m²</b></span><span>Infinity pool on <b>L25</b></span><span><b>3</b> lifts + service lift</span></div>
+  <div class="disc">Independent guide · not affiliated with the developer</div>
+</footer>
+
+<div class="tip" id="tip" hidden>
+  <div class="tip-top"><span class="tip-name" id="tip-name"></span><span class="tip-lvl" id="tip-lvl"></span></div>
+  <div class="tip-meta" id="tip-meta"></div>
+  <div class="tip-cta" id="tip-cta"></div>
+</div>
+
+<button class="backbtn" type="button" id="back" hidden><span aria-hidden="true">←</span> Back to tower</button>
+<div class="lvlnav" id="lvlnav" hidden>
+  <button type="button" id="down" aria-label="Floor below">↓</button>
+  <span id="lvl-label">L12</span>
+  <button type="button" id="up" aria-label="Floor above">↑</button>
+</div>
+
+<main class="stage" id="stage">
+  <section class="sheet-plan" aria-live="polite">
+    <header><h3 id="p-title">Typical floor</h3><span id="p-sub">Redrawn from the brochure</span></header>
+    <div class="plan-svg" id="plan-svg"></div>
+    <div class="plan-foot"><span class="hov" id="hov">Hover a room or a home</span><span>Grey dashed lines mark open-plan zones · blue lines are windows</span></div>
+  </section>
+</main>
+
+<aside class="card" id="card" hidden aria-live="polite">
+  <span class="chip"><i class="dot"></i><span id="c-chip"></span></span>
+  <h2 id="c-title"></h2>
+  <p class="sub" id="c-sub"></p>
+  <dl class="specs" id="c-specs"></dl>
+  <div id="c-units-wrap"><div class="label" id="c-units-label">Homes on this floor</div><div class="units" id="c-units"></div></div>
+  <div id="c-photo"></div>
+  <div class="price" id="c-price"></div>
+  <div class="label">From the developer</div>
+  <ul class="feats" id="c-feats"></ul>
+  <div class="actions">
+    <a class="btn gold" href="https://reportagegroup.com/wp-content/uploads/DGWest-Brochure-Digital-Version-2.pdf" target="_blank" rel="noopener">Open the brochure <span class="arrow" aria-hidden="true">↗</span></a>
+    <button class="ghost" type="button" id="c-all" hidden>← All homes</button>
+  </div>
+  <p class="fine" id="c-fine"></p>
+</aside>
+
+<div class="panel" id="floors" hidden role="dialog" aria-modal="true" aria-labelledby="floors-title">
+  <header>
+    <div><h2 id="floors-title">What's on each floor</h2><p>From the roof down. Open the residential floors or the rooftop to see their plans.</p></div>
+    <button class="close" type="button" data-close aria-label="Close">✕</button>
+  </header>
+  <div class="scroll"><div class="stack" id="stack"></div></div>
+</div>
+
+<div class="panel" id="sources" hidden role="dialog" aria-modal="true" aria-labelledby="sources-title">
+  <header>
+    <div><h2 id="sources-title">Sources &amp; assumptions</h2><p>What this guide takes from the developer's documents, and what it fills in.</p></div>
+    <button class="close" type="button" data-close aria-label="Close">✕</button>
+  </header>
+  <div class="scroll">
+    <ul class="src">
+      <li><a href="https://reportagegroup.com/wp-content/uploads/DGWest-Brochure-Digital-Version-2.pdf" target="_blank" rel="noopener">DG West brochure (Reportage Group)</a> — developer brochure
+        <small>Plans for floors 5–24 and the 25th floor; unit areas (studio 41 m²; one-bed 65 + 5 m²; two-bed 85 + 5 m²) and every room size shown here.</small></li>
+      <li><a href="https://reportagegroup.com/wp-content/uploads/AFRICA_DGWEST_FACTSHEET_V3-1-1.pdf" target="_blank" rel="noopener">DG West factsheet</a>
+        <small>25 floors, 200 units (80 studios, 80 one-bed, 40 two-bed), 1,335.5 m² plot on Sports Road, amenity list.</small></li>
+      <li><a href="https://unsplash.com/license" target="_blank" rel="noopener">Unsplash</a>
+        <small>All photographs are real photos used under the Unsplash License. The tower is still under construction, so none of them show DG West: the background is Nairobi's skyline and the interiors are comparable homes.</small></li>
+      <h3>Filled in by this guide</h3>
+      <li>Plans are redrawn from the printed room sizes; the brochure itself says its drawings are approximate and not to scale. Furniture follows the furniture drawn on the brochure plans.</li>
+      <li>Storey heights aren't published. The elevation and the heights quoted assume 3.2 m floor-to-floor on residential levels.</li>
+      <li>Prices aren't published in either document, so none are shown.</li>
+    </ul>
+  </div>
+</div>
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, a = {}, text) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); if (text != null) e.textContent = text; return e; };
+const coarse = matchMedia('(pointer: coarse)').matches;
+const UNS = (id, w) => `https://images.unsplash.com/photo-${id}?w=${w}&q=80&auto=format&fit=crop`;
+
+$('#photo').style.backgroundImage = `url("${UNS('1741991109902-98bf764fb35d', 2400)}")`;
+
+/* =============== building data (developer brochure + factsheet) =============== */
+const hOf = L => L === 0 ? 4.5 : L <= 2 ? 3.3 : L === 3 ? 4.0 : L === 4 ? 3.6 : L <= 24 ? 3.2 : L === 25 ? 4.6 : 3.2;
+const LEVELS = []; { let y = 0; for (let L = 0; L <= 26; L++) { LEVELS.push({ L, y, h: hOf(L) }); y += hOf(L); } }
+const zoneOf = L => L === 0 ? 'ground' : L <= 2 ? 'parking' : L <= 4 ? 'amenity' : L <= 24 ? 'res' : L === 25 ? 'roof' : 'yoga';
+const ZONES = {
+  ground: { title: 'Ground floor', range: 'G', summary: 'Lobby, reception and drive-in drop-off.' },
+  parking: { title: 'Parking', range: 'L1–L2', summary: 'Two parking decks with lift lobbies.' },
+  amenity: { title: 'Amenity floors', range: 'L3–L4', summary: "Restaurant, residents' lounge, co-working and conference rooms, salon, pet and child day care." },
+  res: { title: 'Residences', range: 'L5–L24', summary: '4 studios · 4 one-bed · 2 two-bed' },
+  roof: { title: 'Pool, gym & spa', range: 'L25', summary: 'Infinity pool, jacuzzi, bar and terrace; gym, Zumba studio and two spas.' },
+  yoga: { title: 'Yoga garden', range: 'Roof', summary: 'Roof garden above the amenity floor.' }
+};
+const TYPES = {
+  studio: { name: 'Studio', k: 'S', internal: 41, external: null, total: 41, photo: '1629042306558-7d1e15cc02fa',
+    rooms: [['Bed space', '2.6 × 3.8 m'], ['Living space', '2.3 × 3.8 m'], ['Open kitchen', '2.4 × 3.8 m'], ['Bath', '2 × 2 m']],
+    sub: 'One 3.8 m-wide room: bed space at the window behind a French balcony, then living space and an open kitchen, with the bath and wardrobe by the door.' },
+  one: { name: 'One bedroom', k: '1', internal: 65, external: 5, total: 70, photo: '1715985160053-d339e8b6eb94',
+    rooms: [['Balcony', '1.2 × 3.8 m'], ['Lounge', '2.8 × 3.8 m'], ['Dining', '1.8 × 3.8 m'], ['Open kitchen', '3.1 × 3.8 m'], ['Utility', '2.5 × 1.3 m'], ['Bedroom', '4.2 × 3.4 m'], ['Bath', '2.15 × 2.1 m']],
+    sub: 'Lounge, dining and an open kitchen with a breakfast bar run back from the balcony. The bedroom sits beside the lounge, with its own bath and a separate utility room.' },
+  two: { name: 'Two bedroom', k: '2', internal: 85, external: 5, total: 90, photo: '1628592102751-ba83b0314276',
+    rooms: [['Balcony', '1.2 × 3.8 m'], ['Lounge', '2.8 × 3.8 m'], ['Dining', '1.8 × 3.8 m'], ['Open kitchen', '3.1 × 3.8 m'], ['Utility', '2.5 × 1.3 m'], ['Master bedroom', '4.2 × 3.4 m'], ['Bedroom 01', '3.6 × 3.4 m'], ['Baths (×2)', '1.4 × 3.0 m']],
+    sub: 'The one-bed living strip plus a master bedroom, a second bedroom with twin beds and two baths along the end of the wing. One at each corner of the floor.' }
+};
+const PD = 25.5, PW = 30.7;
+const UNITS = [];
+[['N', 1], ['S', -1]].forEach(([w, sgn]) => [
+  ['1', 'studio', [[0, .75, 4.075, 10.4]], 'west'], ['2', 'studio', [[4.075, .75, 8.025, 10.4]], 'west'],
+  ['3', 'one', [[8.025, 0, 11.95, 10.4], [11.95, 1.2, 15.475, 7.6]], 'centre'], ['4', 'one', [[19.0, 0, 22.925, 10.4], [15.475, 1.2, 19.0, 7.6]], 'centre'],
+  ['5', 'two', [[22.925, 0, 26.85, 10.4], [26.85, -.8, 30.7, 10.4]], 'east corner']
+].forEach(([n, type, rects, pos]) => UNITS.push({ id: w + n, wing: w, sgn, type, rects, pos })));
+
+/* =============== elevation picker (proportional to storey heights) =============== */
+const elev = $('#elev-svg');
+{
+  const H = LEVELS[26].y + LEVELS[26].h, S = 10, W = PW * S, padL = 34, padT = 8;
+  elev.setAttribute('viewBox', `0 0 ${W + padL + 12} ${H * S + padT + 6}`);
+  const Y = y => padT + (H - y) * S;
+  const defs = el('defs');
+  const g1 = el('linearGradient', { id: 'gl', x1: 0, y1: 0, x2: 1, y2: 0 });
+  [['0', '#3b4a58', .85], ['.5', '#5d7183', .7], ['1', '#33404c', .85]].forEach(([o, c, a]) => g1.append(el('stop', { offset: o, 'stop-color': c, 'stop-opacity': a })));
+  defs.append(g1); elev.append(defs);
+  LEVELS.forEach(({ L, y, h }) => {
+    const z = zoneOf(L), pod = L <= 4, x0 = padL + (pod ? -6 : 0), w = W + (pod ? 12 : 0);
+    const g = el('g', { class: 'lv' + (z === 'res' || z === 'roof' ? '' : ' static'), 'data-l': L, tabindex: 0, role: 'button', 'aria-label': `${L === 0 ? 'Ground floor' : L === 26 ? 'Roof' : 'Level ' + L}: ${ZONES[z].title}` });
+    const yy = Y(y + h), hh = h * S;
+    if (z === 'res' || z === 'roof') {
+      g.append(el('rect', { x: x0, y: yy, width: w, height: hh, fill: 'url(#gl)' }));
+      g.append(el('rect', { x: x0, y: yy + hh - 3, width: w, height: 3, fill: 'rgba(240,238,232,.9)' }));
+      [0, 4.075, 8.025, 11.95, 15.475, 19.0, 22.925, 26.85, PW].forEach((c, i) => g.append(el('rect', { x: padL + c * S - (i === 0 || i === 8 ? 0 : 1), y: yy, width: i === 0 || i === 8 ? 16 : 2, height: hh, fill: i === 0 || i === 8 ? 'rgba(46,48,52,.95)' : 'rgba(235,233,228,.75)', transform: i === 8 ? 'translate(-16 0)' : '' })));
+      if (z === 'res') [8.025, 19.0, 22.925].forEach(c => g.append(el('rect', { x: padL + c * S + 2, y: yy + hh * .55, width: 3.9 * S - 4, height: 1.5, fill: 'rgba(255,255,255,.55)' })));
+    } else if (z === 'yoga') {
+      g.append(el('rect', { x: padL + 2, y: yy + hh * .55, width: W - 4, height: hh * .45, fill: 'rgba(80,110,70,.75)' }));
+      g.append(el('rect', { x: padL + 12 * S, y: yy, width: 7 * S, height: hh, fill: 'rgba(225,223,218,.85)' }));
+    } else {
+      g.append(el('rect', { x: x0, y: yy, width: w, height: hh, fill: z === 'parking' ? 'rgba(150,152,155,.88)' : z === 'amenity' ? 'url(#gl)' : 'rgba(70,80,90,.85)' }));
+      g.append(el('rect', { x: x0, y: yy + hh - 3, width: w, height: 3, fill: 'rgba(240,238,232,.9)' }));
+      if (z === 'parking') for (let k = 1; k < 10; k++) g.append(el('rect', { x: x0, y: yy + k * hh / 10, width: w, height: 1, fill: 'rgba(230,230,228,.6)' }));
+    }
+    g.append(el('rect', { class: 'band', x: x0 - 4, y: yy, width: w + 8, height: hh }));
+    if ([0, 5, 10, 15, 20, 25].includes(L)) elev.append(el('text', { x: 4, y: yy + hh / 2 + 3, fill: 'rgba(255,255,255,.75)', 'font-family': 'IBM Plex Mono, monospace', 'font-size': 9 }, L === 0 ? 'G' : 'L' + L));
+    elev.append(g);
+  });
+}
+
+/* =============== tooltip / hover =============== */
+const tip = $('#tip');
+let hovL = null;
+const lvlName = L => L === 0 ? 'Ground' : L === 26 ? 'Roof' : 'Level ' + L;
+const openable = L => L >= 5 && L <= 25;
+function showTip(L, x, y) {
+  const z = ZONES[zoneOf(L)];
+  $('#tip-name').textContent = z.title; $('#tip-lvl').textContent = lvlName(L); $('#tip-meta').textContent = z.summary;
+  $('#tip-cta').textContent = openable(L) ? (coarse ? 'Tap again to open this floor' : 'Click to open this floor') : 'Not drawn inside';
+  tip.hidden = false; const r = tip.getBoundingClientRect(); let tx = x; if (tx + 18 + r.width > innerWidth - 12) tx = x - r.width - 36;
+  tip.style.left = tx + 'px'; tip.style.top = Math.max(r.height / 2 + 12, Math.min(innerHeight - r.height / 2 - 12, y)) + 'px';
+  document.body.classList.add('hovering');
+}
+function hideTip() { tip.hidden = true; document.body.classList.remove('hovering'); elev.querySelectorAll('.lv.on').forEach(n => n.classList.remove('on')); hovL = null; }
+elev.querySelectorAll('.lv').forEach(g => {
+  const L = +g.dataset.l;
+  g.addEventListener('pointermove', e => { if (e.pointerType === 'touch') return; if (hovL !== L) { elev.querySelectorAll('.lv.on').forEach(n => n.classList.remove('on')); g.classList.add('on'); } hovL = L; showTip(L, e.clientX, e.clientY); });
+  g.addEventListener('pointerleave', hideTip);
+  g.addEventListener('click', e => {
+    if (coarse && hovL !== L) { hideTip(); hovL = L; g.classList.add('on'); showTip(L, e.clientX, e.clientY); return; }
+    if (openable(L)) { hideTip(); openLevel(L); }
+  });
+  g.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && openable(L)) { e.preventDefault(); openLevel(L); } });
+});
+
+/* =============== plan drawings =============== */
+const WALL = .16, EXT = .26;
+const hov = t => { $('#hov').textContent = t; };
+function hatchDefs(svg) { const d = el('defs'), p = el('pattern', { id: 'hatch', width: 7, height: 7, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }); p.append(el('rect', { width: 7, height: 7, fill: '#f2f0eb' }), el('line', { x1: 0, y1: 0, x2: 0, y2: 7, stroke: '#cfcac3', 'stroke-width': 1 })); d.append(p); svg.append(d); }
+function scaleBar(svg, x, y, S, m) { svg.append(el('line', { x1: x, y1: y, x2: x + m * S, y2: y, stroke: '#6c6670', 'stroke-width': 2 }), el('line', { x1: x, y1: y - 4, x2: x, y2: y + 4, stroke: '#6c6670' }), el('line', { x1: x + m * S, y1: y - 4, x2: x + m * S, y2: y + 4, stroke: '#6c6670' }), el('text', { x: x + m * S + 8, y: y + 4, class: 'rd', 'text-anchor': 'start' }, m + ' m')); }
+// furniture symbols in metres
+function furn(svg, X, Y, S, items) {
+  items.forEach(([t, a, b, c, d]) => {
+    if (t === 'r') svg.append(el('rect', { x: X(a), y: Y(b), width: (c - a) * S, height: (d - b) * S, class: 'fx-fill', rx: 2 }));
+    else if (t === 'o') svg.append(el('circle', { cx: X(a), cy: Y(b), r: c * S, class: 'fx-fill' }));
+    else if (t === 'bed') { svg.append(el('rect', { x: X(a), y: Y(b), width: (c - a) * S, height: (d - b) * S, class: 'fx-fill', rx: 3 })); const hz = (d - b) > (c - a); if (!hz) { svg.append(el('rect', { x: X(c - .5), y: Y(b + .12), width: .38 * S, height: (d - b - .24) * S, class: 'fx', rx: 4 })); svg.append(el('line', { x1: X(a + (c - a) * .38), y1: Y(b), x2: X(a + (c - a) * .38), y2: Y(d), class: 'fx' })); } }
+    else if (t === 'wc') { svg.append(el('ellipse', { cx: X(a), cy: Y(b), rx: .18 * S, ry: .25 * S, class: 'fx-fill' })); }
+    else if (t === 'basin') { svg.append(el('ellipse', { cx: X(a), cy: Y(b), rx: .24 * S, ry: .17 * S, class: 'fx-fill' })); }
+    else if (t === 'tub') { svg.append(el('rect', { x: X(a), y: Y(b), width: (c - a) * S, height: (d - b) * S, class: 'fx-fill', rx: 8 })); svg.append(el('rect', { x: X(a + .08), y: Y(b + .08), width: (c - a - .16) * S, height: (d - b - .16) * S, class: 'fx', rx: 10 })); }
+    else if (t === 'shower') { svg.append(el('rect', { x: X(a), y: Y(b), width: (c - a) * S, height: (d - b) * S, class: 'fx' })); svg.append(el('line', { x1: X(a), y1: Y(b), x2: X(c), y2: Y(d), class: 'fx' })); svg.append(el('line', { x1: X(c), y1: Y(b), x2: X(a), y2: Y(d), class: 'fx' })); }
+  });
+}
+const LOUNGE = [
+  ['Balcony', '1.2 × 3.8 m', 0, -1.2, 3.8, 0, 'out'], ['Lounge', '2.8 × 3.8 m', 0, 0, 3.8, 2.8, 'dry'], ['Dining', '1.8 × 3.8 m', 0, 2.8, 3.8, 4.6, 'open'],
+  ['Open kitchen', '3.1 × 3.8 m', 0, 4.6, 3.8, 7.7, 'open'], ['Utility', '2.5 × 1.3 m', 0, 7.7, 2.5, 9.0, 'wet'], ['Entry', null, 2.5, 7.7, 3.8, 9.0, 'dry']];
+const LOUNGE_F = [['r', 0.05, .4, .95, 2.5], ['r', .95, .05, 2.1, .95], ['o', 1.95, 1.45, .42], ['r', 3.4, .5, 3.75, 2.3], ['r', 1.5, 3.05, 2.4, 4.35], ['o', 1.25, 3.3, .2], ['o', 1.25, 4.1, .2], ['o', 2.65, 3.3, .2], ['o', 2.65, 4.1, .2],
+  ['r', .05, 4.95, 2.4, 5.55], ['o', .5, 4.65, .17], ['o', 1.15, 4.65, .17], ['o', 1.8, 4.65, .17], ['r', .05, 5.55, .65, 7.65], ['r', .65, 7.05, 2.5, 7.65], ['r', 2.6, 7.05, 3.25, 7.65], ['r', .1, 8.35, .7, 8.95], ['o', 1.9, -.6, .3]];
+const PLANS = {
+  studio: { name: 'Studio', rooms: [
+    ['French balcony', null, .2, -.4, 3.6, 0, 'out'], ['Bed space', '2.6 × 3.8 m', 0, 0, 3.8, 2.6, 'dry'], ['Living space', '2.3 × 3.8 m', 0, 2.6, 3.8, 4.9, 'open'],
+    ['Open kitchen', '2.4 × 3.8 m', 0, 4.9, 3.8, 7.3, 'open'], ['Wardrobe · entry', null, 0, 7.3, 1.8, 9.3, 'dry'], ['Bath', '2 × 2 m', 1.8, 7.3, 3.8, 9.3, 'wet']],
+    furn: [['bed', 1.75, .55, 3.75, 2.15], ['r', .05, .3, .6, 1.4], ['r', 2.95, 2.95, 3.75, 4.6], ['r', .05, 3.0, .45, 4.5], ['r', 1.8, 5.15, 3.75, 5.75], ['r', 3.15, 5.75, 3.75, 6.85], ['o', .75, 6.2, .35], ['r', .05, 7.4, .65, 9.2], ['wc', 3.45, 7.7], ['shower', 2.85, 8.35, 3.75, 9.25], ['basin', 2.3, 9.05]],
+    env: [[0, 0, 3.8, 9.3]], windows: [[.2, 0, 3.6, 0]] },
+  one: { name: 'One bedroom', rooms: [...LOUNGE, ['Bedroom', '4.2 × 3.4 m', 3.9, 0, 7.3, 4.2, 'dry'], ['Lobby', null, 3.9, 4.2, 5.1, 6.3, 'dry'], ['Bath', '2.15 × 2.1 m', 5.15, 4.2, 7.3, 6.3, 'wet']],
+    furn: [...LOUNGE_F, ['bed', 5.2, 1.3, 7.25, 2.95], ['r', 6.85, .85, 7.25, 1.25], ['r', 6.85, 3.0, 7.25, 3.4], ['r', 5.3, 3.6, 7.25, 4.15], ['r', 3.95, .3, 4.5, 1.4], ['wc', 6.95, 4.65], ['tub', 5.35, 5.45, 7.2, 6.2], ['basin', 4.5, 6.0]],
+    env: [[0, 0, 3.8, 9.0], [3.9, 0, 7.3, 6.3]], windows: [[.15, 0, 3.65, 0], [4.4, 0, 6.8, 0]] },
+  two: { name: 'Two bedroom', rooms: [...LOUNGE, ['Master bedroom', '4.2 × 3.4 m', 3.9, -2.0, 7.5, 2.2, 'dry'], ['Hall', null, 3.9, 2.2, 5.3, 5.1, 'dry'],
+    ['Bath', '1.4 × 3.0 m', 5.35, 2.2, 7.5, 3.65, 'wet'], ['Bath', '1.4 × 3.0 m', 5.35, 3.65, 7.5, 5.1, 'wet'], ['Bedroom 01', '3.6 × 3.4 m', 3.9, 5.1, 7.5, 8.7, 'dry']],
+    furn: [...LOUNGE_F, ['bed', 5.3, -1.05, 7.45, .75], ['r', 7.05, -1.55, 7.45, -1.15], ['r', 7.05, .85, 7.45, 1.25], ['r', 5.2, 1.6, 7.45, 2.15], ['r', 3.95, -1.9, 4.55, -.8],
+      ['shower', 6.6, 2.3, 7.45, 3.55], ['wc', 5.75, 2.6], ['basin', 5.75, 3.35], ['shower', 6.6, 3.75, 7.45, 5.0], ['wc', 5.75, 4.05], ['basin', 5.75, 4.8],
+      ['bed', 5.6, 5.45, 7.45, 6.4], ['bed', 5.6, 7.4, 7.45, 8.35], ['r', 7.05, 6.7, 7.45, 7.1], ['r', 3.95, 5.6, 4.55, 7.3]],
+    env: [[0, 0, 3.8, 9.0], [3.9, -2.0, 7.5, 8.7]], windows: [[.15, 0, 3.65, 0], [4.3, -2.0, 7.1, -2.0], [4.6, 8.7, 6.8, 8.7]] }
+};
+function drawUnit(key) {
+  const P = PLANS[key], S = 54, pad = 34;
+  const xs = P.rooms.flatMap(r => [r[2], r[4]]), zs = P.rooms.flatMap(r => [r[3], r[5]]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minZ = Math.min(...zs), maxZ = Math.max(...zs);
+  const W = (maxX - minX) * S + pad * 2, H = (maxZ - minZ) * S + pad * 2 + 26;
+  const X = x => (x - minX) * S + pad, Y = z => (z - minZ) * S + pad;
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `${P.name} plan` }); hatchDefs(svg);
+  const order = { out: 0, open: 1, dry: 2, wet: 3 };
+  [...P.rooms].sort((a, b) => order[a[6]] - order[b[6]]).forEach(([name, dims, x0, z0, x1, z1, kind]) => {
+    const r = el('rect', { x: X(x0), y: Y(z0), width: (x1 - x0) * S, height: (z1 - z0) * S, class: 'w ' + (kind === 'open' ? 'open' : kind), 'stroke-width': kind === 'dry' || kind === 'wet' ? WALL * S : 1 });
+    r.append(el('title', {}, dims ? `${name}: ${dims}` : name));
+    r.addEventListener('pointerenter', () => { svg.querySelectorAll('.hl').forEach(n => n.classList.remove('hl')); r.classList.add('hl'); hov(dims ? `${name} · ${dims}` : name); });
+    svg.append(r);
+  });
+  // outer wall
+  const ix = P.rooms.filter(r => r[6] !== 'out');
+  const bx0 = Math.min(...ix.map(r => r[2])), bx1 = Math.max(...ix.map(r => r[4]));
+  P.env.forEach(([x0, z0, x1, z1]) => svg.append(el('rect', { x: X(x0), y: Y(z0), width: (x1 - x0) * S, height: (z1 - z0) * S, fill: 'none', stroke: '#1d1b1f', 'stroke-width': EXT * S, 'pointer-events': 'none' })));
+  furn(svg, X, Y, S, P.furn);
+  P.windows.forEach(([x0, z0, x1, z1]) => { svg.append(el('line', { x1: X(x0), y1: Y(z0), x2: X(x1), y2: Y(z1), class: 'win', 'stroke-width': WALL * S + 1 })); [-.05, .05].forEach(o => svg.append(el('line', { x1: X(x0), y1: Y(z0 + o), x2: X(x1), y2: Y(z1 + o), class: 'win2' }))); });
+  P.rooms.forEach(([name, dims, x0, z0, x1, z1]) => {
+    const cx = X((x0 + x1) / 2), cy = Y((z0 + z1) / 2), small = (x1 - x0) < 1.6 || (z1 - z0) < 1.0;
+    const lines = name.length > 11 && (x1 - x0) < 2.6 ? name.split(' ') : [name];
+    lines.forEach((t, i) => svg.append(el('text', { x: cx, y: cy - (dims ? 3 : -4) + (i - (lines.length - 1) / 2) * 12, class: 'rl', style: small ? 'font-size:8.5px' : '' }, t)));
+    if (dims) svg.append(el('text', { x: cx, y: cy + 11 + (lines.length - 1) * 6, class: 'rd' }, dims));
+  });
+  scaleBar(svg, pad, H - 16, S, 2);
+  return svg;
+}
+function drawFloor(sel) {
+  const S = 22, pad = 22, minZ = -1.4, maxZ = PD + 1.4;
+  const W = PW * S + pad * 2 + 20, H = (maxZ - minZ) * S + pad * 2 + 22;
+  const X = x => x * S + pad, Y = z => (z - minZ) * S + pad, mz = (z, s) => s > 0 ? z : PD - z;
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Typical floor plan, floors 5 to 24' }); hatchDefs(svg);
+  const R = (x0, z0, x1, z1, cls, sw = 1) => { const r = el('rect', { x: X(x0), y: Y(Math.min(z0, z1)), width: (x1 - x0) * S, height: Math.abs(z1 - z0) * S, class: cls, 'stroke-width': sw }); svg.append(r); return r; };
+  [[0, 12], [18.95, 26.85]].forEach(([a, b]) => { R(a, 11.7, b, 13.8, 'w slot'); R(a, 10.4, b, 11.7, 'w core', 2); R(a, 13.8, b, 15.1, 'w core', 2); });
+  R(26.85, 10.4, PW, 15.1, 'w slot');
+  R(12, 7.6, 18.95, 17.9, 'w core', 3);
+  [13.0, 15.475, 17.95].forEach(x => { R(x - .9, 8.3, x + .9, 10.2, 'fx-fill'); });
+  for (let i = 0; i < 9; i++) { svg.append(el('line', { x1: X(12.6), y1: Y(15.4 + i * .28), x2: X(15.2), y2: Y(15.4 + i * .28), class: 'fx' })); }
+  R(16.3, 15.4, 18.6, 17.6, 'fx-fill');
+  const lbl = (x, z, t) => svg.append(el('text', { x: X(x), y: Y(z), class: 'rd' }, t));
+  lbl(15.475, 9.45, 'Lifts ×3'); lbl(15.475, 12.9, 'Lobby'); lbl(13.9, 17.75, 'Stair'); lbl(17.45, 16.6, 'Service'); lbl(6, 12.9, 'Light slot'); lbl(6, 11.2, 'Passage'); lbl(6, 14.6, 'Passage'); lbl(22.9, 11.2, 'Passage'); lbl(22.9, 14.6, 'Passage');
+  const fill = { studio: '#ebe8e2', one: '#efe3cc', two: '#d9e6e3' };
+  UNITS.forEach(u => {
+    const g = el('g', { class: 'u' + (sel === u ? ' sel' : ''), tabindex: 0, role: 'button', 'aria-label': `Home ${u.id}: ${TYPES[u.type].name}, ${TYPES[u.type].total} m²` });
+    u.rects.forEach(([x0, z0, x1, z1]) => g.append(el('rect', { x: X(x0), y: Y(Math.min(mz(z0, u.sgn), mz(z1, u.sgn))), width: (x1 - x0) * S, height: Math.abs(z1 - z0) * S, fill: fill[u.type], 'stroke-width': 3 })));
+    const [x0, , x1] = u.rects[0], cx = X((x0 + x1) / 2), cz = Y(mz(4.8, u.sgn));
+    g.append(el('text', { x: cx, y: cz - 6, class: 'rl', style: 'font-size:12px' }, u.id), el('text', { x: cx, y: cz + 9, class: 'rd' }, TYPES[u.type].name.replace(' bedroom', '-bed')), el('text', { x: cx, y: cz + 22, class: 'rd' }, TYPES[u.type].total + ' m²'));
+    g.addEventListener('pointerenter', () => hov(`Home ${u.id} · ${TYPES[u.type].name} · ${TYPES[u.type].total} m² · click to open`));
+    g.addEventListener('click', () => selectUnit(u));
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectUnit(u); } });
+    svg.append(g);
+  });
+  // balcony glass lines on the long faces
+  [8.025, 19.0, 22.925].forEach(a => [1, -1].forEach(s => svg.append(el('line', { x1: X(a + .15), y1: Y(mz(0, s)), x2: X(a + 3.75), y2: Y(mz(0, s)), stroke: '#5b7d8c', 'stroke-width': 2 }))));
+  scaleBar(svg, pad, H - 12, S, 5);
+  return svg;
+}
+function drawRoof() {
+  const S = 22, pad = 22, minZ = -.4, maxZ = PD + 1.2;
+  const W = PW * S + pad * 2 + 20, H = (maxZ - minZ) * S + pad * 2 + 22;
+  const X = x => x * S + pad, Y = z => (z - minZ) * S + pad;
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': '25th floor plan' }); hatchDefs(svg);
+  const room = (n, x0, z0, x1, z1, kind = 'dry', note) => { const r = el('rect', { x: X(x0), y: Y(z0), width: (x1 - x0) * S, height: (z1 - z0) * S, class: 'w ' + kind, 'stroke-width': kind === 'out' ? 1 : 3 }); r.addEventListener('pointerenter', () => { svg.querySelectorAll('.hl').forEach(m => m.classList.remove('hl')); r.classList.add('hl'); hov(note ? `${n} · ${note}` : n); }); svg.append(r); if (n) svg.append(el('text', { x: X((x0 + x1) / 2), y: Y((z0 + z1) / 2) + 3, class: 'rl', style: (x1 - x0) < 3 ? 'font-size:8px' : '' }, n)); return r; };
+  room('Open terrace', 0, 13.8, PW, 24.75, 'out');
+  room('Gym', .3, .4, 10.75, 10.4); room('Office', 8.0, .4, 10.75, 3.0); room('Zumba studio', 10.9, .4, 19.05, 5.6);
+  room('Massage', 19.2, .4, 22.3, 3.4, 'wet'); room('Steam', 22.3, .4, 25.0, 3.4, 'wet'); room('Sauna', 25.0, .4, 27.8, 3.4, 'wet'); room('WC', 27.8, .4, 30.4, 3.4, 'wet');
+  room("Women's spa", 19.2, 3.4, 30.4, 4.6, 'dry'); room('Lockers', 19.2, 4.6, 30.4, 6.3, 'dry'); room("Gents' spa", 19.2, 6.3, 30.4, 7.4, 'dry');
+  room('Massage', 19.2, 7.4, 22.3, 10.4, 'wet'); room('Steam', 22.3, 7.4, 25.0, 10.4, 'wet'); room('Sauna', 25.0, 7.4, 27.8, 10.4, 'wet'); room('WC', 27.8, 7.4, 30.4, 10.4, 'wet');
+  room('Lifts', 12.3, 7.8, 18.7, 10.4, 'core'); room('Lobby', 10.9, 10.4, 19.05, 13.2, 'core'); room('Stair · service lift', 12.3, 13.2, 18.7, 17.4, 'core'); room('Plant', 7.7, 13.6, 10.8, 17.2, 'core');
+  const water = (n, x0, z0, x1, z1, note) => { const r = el('rect', { x: X(x0), y: Y(z0), width: (x1 - x0) * S, height: (z1 - z0) * S, fill: '#bfe0e6', stroke: '#5b7d8c', 'stroke-width': 2 }); r.addEventListener('pointerenter', () => hov(`${n} · ${note}`)); svg.append(r); svg.append(el('text', { x: X((x0 + x1) / 2), y: Y((z0 + z1) / 2) + 3, class: 'rl' }, n)); };
+  water('Infinity pool', 1.6, 19.2, 13.4, 23.0, '≈ 11.8 × 3.8 m, scaled from the plan'); water('Baby', 13.75, 19.2, 15.5, 23.0, 'baby pool'); water('Jacuzzi', 1.8, 17.0, 4.4, 18.9, 'jacuzzi');
+  room('Bar', 20.4, 13.6, 28.1, 14.4, 'core', 'bar counter under a louvred pergola'); room('Terrace', 22.2, 19.0, 28.1, 23.6, 'dry', 'built-in T-shaped bench');
+  for (let i = 0; i < 5; i++) svg.append(el('rect', { x: X(5.3 + i * 1.15), y: Y(16.7), width: .7 * S, height: 1.9 * S, class: 'fx-fill', rx: 3 }));
+  for (let i = 0; i < 4; i++) svg.append(el('rect', { x: X(1.1 + i * 1.15), y: Y(.9), width: .8 * S, height: 1.8 * S, class: 'fx-fill' }));
+  for (let x = 20.2; x < 30.4; x += .45) svg.append(el('line', { x1: X(x), y1: Y(13.0), x2: X(x), y2: Y(24.5), stroke: 'rgba(29,27,31,.12)', 'stroke-width': 1 }));
+  scaleBar(svg, pad, H - 12, S, 5);
+  return svg;
+}
+
+/* =============== card =============== */
+let mode = 'ext', curL = null, selU = null;
+const spec = a => a.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+function fillCard() {
+  const L = curL, lv = LEVELS[L], z = zoneOf(L);
+  $('#c-all').hidden = !selU;
+  $('#c-photo').innerHTML = '';
+  if (z === 'roof') {
+    $('#c-chip').textContent = 'Level 25 · amenity floor';
+    $('#c-title').textContent = 'Pool, gym & spa';
+    $('#c-sub').textContent = 'An open terrace with the infinity pool on the south side; the gym, Zumba studio and spas in the enclosed north half. A yoga garden sits on the roof above.';
+    $('#c-specs').innerHTML = spec([['Height', '≈ ' + Math.round(lv.y) + ' m'], ['Pool', '≈ 11.8 × 3.8 m'], ['Spas', '2'], ['Use', 'Residents'], ['Lifts', '3 + service'], ['Plan', 'From brochure']]);
+    $('#c-units-wrap').hidden = true;
+    $('#c-photo').innerHTML = `<div class="photo-card"><img src="${UNS('1688710921245-1dce2572a0d3', 900)}" alt="A rooftop pool lit up above a city at night"><small>Representative photo, not DG West</small></div>`;
+    $('#c-price').innerHTML = '<strong>Residents only</strong><span>Shared amenity for all 200 homes.</span>';
+    $('#c-feats').innerHTML = ['Rooftop infinity pool with skyline views', 'Baby pool and jacuzzi', 'Gym, Zumba studio, spas with steam rooms and saunas', 'Bar area and terrace; yoga garden above'].map(f => `<li>${f}</li>`).join('');
+    $('#c-fine').textContent = 'Layout traced from the brochure\'s 25th-floor plan. The pool size is scaled off that plan rather than printed on it.';
+    $('#p-title').textContent = '25th floor'; $('#p-sub').textContent = 'Redrawn from the brochure';
+    $('#plan-svg').replaceChildren(drawRoof()); hov('Hover a room');
+    return;
+  }
+  $('#c-units-wrap').hidden = false;
+  if (selU) {
+    const T = TYPES[selU.type];
+    $('#c-chip').textContent = `Level ${L} · home ${selU.id}`;
+    $('#c-title').textContent = T.name;
+    $('#c-sub').textContent = T.sub;
+    $('#c-specs').innerHTML = spec([['Internal', T.internal + ' m²'], ['Balcony', T.external ? T.external + ' m²' : 'French'], ['Total', T.total + ' m²'], ['Wing', selU.wing === 'N' ? 'North' : 'South'], ['Position', selU.pos], ['Height', '≈ ' + Math.round(lv.y) + ' m']]);
+    $('#c-units-label').textContent = 'Room sizes from the plan';
+    $('#c-units').innerHTML = T.rooms.map(([r, d], i) => `<div class="unit static"><span class="k">${i + 1}</span><span><b>${r}</b></span><span class="sz">${d}</span></div>`).join('');
+    $('#c-photo').innerHTML = `<div class="photo-card"><img src="${UNS(T.photo, 900)}" alt="A comparable ${T.name.toLowerCase()} interior"><small>Representative interior, not DG West</small></div>`;
+    $('#p-title').textContent = `${T.name} · home ${selU.id}`; $('#p-sub').textContent = 'Room sizes as printed in the brochure';
+    $('#plan-svg').replaceChildren(drawUnit(selU.type)); hov('Hover a room');
+  } else {
+    $('#c-chip').textContent = `Level ${L} of 25 · L5–L24`;
+    $('#c-title').textContent = 'Residential floor';
+    $('#c-sub').textContent = 'Ten homes in two mirrored wings, joined by a core with three passenger lifts, a service lift and the stair.';
+    $('#c-specs').innerHTML = spec([['Height', '≈ ' + Math.round(lv.y) + ' m'], ['Ceiling', 'n/p'], ['Per floor', '10 homes'], ['Studios', '4'], ['One-bed', '4'], ['Two-bed', '2']]);
+    $('#c-units-label').textContent = 'Homes on this floor';
+    $('#c-units').innerHTML = UNITS.map(u => `<button type="button" class="unit" data-u="${u.id}" aria-pressed="false"><span class="k">${TYPES[u.type].k}</span><span><b>${u.id} · ${TYPES[u.type].name}</b><small>${u.wing === 'N' ? 'North' : 'South'} wing, ${u.pos}</small></span><span class="sz">${TYPES[u.type].total} m²</span></button>`).join('');
+    $('#c-units').querySelectorAll('[data-u]').forEach(b => b.onclick = () => selectUnit(UNITS.find(u => u.id === b.dataset.u)));
+    $('#p-title').textContent = `Level ${L} · typical floor`; $('#p-sub').textContent = 'Floors 5–24 · redrawn from the brochure';
+    $('#plan-svg').replaceChildren(drawFloor(null)); hov('Hover a home, then click to open it');
+  }
+  $('#c-price').innerHTML = '<strong>Price on request</strong><span>Prices aren\'t published in the brochure or factsheet. Ask the developer.</span>';
+  $('#c-feats').innerHTML = ['Private balconies or terraces, per unit plan', 'Fully tiled bathrooms; en-suite bedrooms per plan', 'Double-glazed windows and built-in wardrobes', 'Fibre internet and satellite TV'].map(f => `<li>${f}</li>`).join('');
+  $('#c-fine').textContent = 'Independent guide built from the developer\'s brochure; not affiliated with Reportage Group. The brochure notes its drawings are approximate and not to scale. "n/p" = not published.';
+}
+function selectUnit(u) { selU = u; fillCard(); $('#card').scrollTop = 0; }
+$('#c-all').onclick = () => { selU = null; fillCard(); };
+
+/* =============== transitions =============== */
+function openLevel(L) {
+  closePanels(); hideTip();
+  curL = L; selU = null; mode = 'int';
+  document.body.classList.add('interior');
+  ['#card', '#back', '#lvlnav'].forEach(s => $(s).hidden = false);
+  $('#lvl-label').textContent = 'L' + L;
+  fillCard();
+  const c = $('#card'); c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
+  $('#back').focus({ preventScroll: true });
+}
+function backToTower() { mode = 'ext'; curL = null; selU = null; document.body.classList.remove('interior'); ['#card', '#back', '#lvlnav'].forEach(s => $(s).hidden = true); }
+function step(d) { if (curL === null) return; const n = curL + d; if (n >= 5 && n <= 25) openLevel(n); }
+$('#back').onclick = backToTower; $('#up').onclick = () => step(1); $('#down').onclick = () => step(-1);
+
+/* =============== panels =============== */
+const STACK = [
+  ['Roof', 'Yoga garden', 'Lawn, planters and a timber pergola above the amenity floor.', null],
+  ['L25', 'Pool, gym & spa', 'Infinity pool, baby pool, jacuzzi, bar and terrace; gym, Zumba studio and two spas.', 25],
+  ['L5–L24', 'Residences', 'Ten homes per floor: 4 studios (41 m²), 4 one-bed (70 m²), 2 two-bed (90 m²).', 14],
+  ['L3–L4', 'Amenity floors', 'Restaurant, residents\' lounge, co-working and conference rooms, salon, pet and child day care.', null],
+  ['L1–L2', 'Parking', 'Two parking decks.', null],
+  ['G', 'Ground floor', 'Lobby, reception and drop-off.', null],
+  ['B1', 'Basement', 'Generators, transformer and services, staff facilities.', null]
+];
+$('#stack').innerHTML = STACK.map(([lv, t, s, o]) => `<button type="button" ${o === null ? 'disabled' : `data-open="${o}"`}><span class="lv">${lv}</span><span><b>${t}</b><small>${s}</small></span><span class="go">${o === null ? '' : 'Open →'}</span></button>`).join('');
+$('#stack').addEventListener('click', e => { const b = e.target.closest('[data-open]'); if (b) openLevel(+b.dataset.open); });
+let lastFocus = null;
+function openPanel(id) { closePanels(); lastFocus = document.activeElement; $(id).hidden = false; $(id).querySelector('.close').focus(); }
+function closePanels() { const was = !$('#floors').hidden || !$('#sources').hidden; $('#floors').hidden = true; $('#sources').hidden = true; if (was && lastFocus) try { lastFocus.focus({ preventScroll: true }); } catch (_) {} }
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = closePanels);
+$('#nav-floors').onclick = $('#explore').onclick = () => openPanel('#floors');
+$('#nav-sources').onclick = $('#hero-sources').onclick = () => openPanel('#sources');
+$('#nav-typical').onclick = () => openLevel(14);
+$('#nav-roof').onclick = () => openLevel(25);
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if (!$('#floors').hidden || !$('#sources').hidden) closePanels(); else if (selU) { selU = null; fillCard(); } else if (mode === 'int') backToTower(); }
+  if (mode === 'int' && (e.key === 'PageUp' || e.key === 'PageDown')) { e.preventDefault(); step(e.key === 'PageUp' ? 1 : -1); }
+});
+if (coarse) $('#hero-p').textContent = "A guide to Westlands' newest residential tower, drawn from the developer's own floor plans and room sizes. Tap a floor on the tower, then tap again to look inside.";
+const m = /^#level-(\d{1,2})$/.exec(location.hash); if (m && openable(+m[1])) openLevel(+m[1]);
+})();
+</script>
+</body></html>
